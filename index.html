@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>GrowthPilot – Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1a1a2e;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .dashboard-header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #007aff, #00c6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .dashboard-header .header-date {
+            font-size: 14px;
+            color: #6b7280;
+            background: #fff;
+            padding: 8px 18px;
+            border-radius: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: 1px solid #eef2f6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 18px 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border: 1px solid #eef2f6;
+            transition: transform 0.15s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #8e95a3;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-top: 6px;
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .stat-card.accent-blue .stat-value { color: #007aff; }
+        .stat-card.accent-green .stat-value { color: #34c759; }
+        .stat-card.accent-orange .stat-value { color: #ff9500; }
+        .stat-card.accent-purple .stat-value { color: #af52de; }
+        .stat-card.accent-red .stat-value { color: #ff3b30; }
+
+        .quick-action-card {
+            background: linear-gradient(135deg, #f8faff, #ffffff);
+            border-radius: 20px;
+            padding: 28px 32px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eef2f6;
+            overflow: visible !important;
+            max-height: none !important;
+            height: auto !important;
+            min-height: fit-content;
+        }
+
+        .quick-action-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-action-card h3 span {
+            font-size: 22px;
+        }
+
+        .action-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .action-btn {
+            background: #ffffff;
+            border: 1px solid #e0e7ef;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: #007aff;
+            color: #fff;
+            border-color: #007aff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 122, 255, 0.15);
+        }
+
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .card-footer {
+            font-size: 14px;
+            color: #6b7280;
+            border-top: 1px solid #f0f2f5;
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .card-footer a {
+            color: #007aff;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .card-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .card-footer .badge {
+            background: #e8f0fe;
+            color: #007aff;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .widgets-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .widget-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 22px 24px;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            overflow: visible !important;
+            height: auto !important;
+        }
+
+        .widget-card h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f3f6;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .activity-dot.green { background: #34c759; }
+        .activity-dot.blue { background: #007aff; }
+        .activity-dot.orange { background: #ff9500; }
+        .activity-dot.purple { background: #af52de; }
+
+        .activity-text {
+            flex: 1;
+            font-size: 14px;
+            color: #1a1a2e;
+        }
+
+        .activity-text .highlight {
+            font-weight: 600;
+            color: #007aff;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #8e95a3;
+            flex-shrink: 0;
+        }
+
+        .image-pool-status {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pool-bar {
+            width: 100%;
+            height: 8px;
+            background: #eef2f6;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .pool-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007aff, #00c6ff);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.6s ease;
+        }
+
+        .pool-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 14px; }
+            .dashboard-header h1 { font-size: 22px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .stat-card .stat-value { font-size: 26px; }
+            .quick-action-card { padding: 20px; }
+            .action-btn { white-space: normal; font-size: 13px; padding: 8px 16px; }
+            .widgets-row { grid-template-columns: 1fr; }
+            .card-footer { flex-direction: column; align-items: flex-start; }
+        }
+
+        @media (max-width: 430px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .stat-card { padding: 14px; }
+            .stat-card .stat-value { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+        <h1>📊 GrowthPilot · Dashboard</h1>
+        <span class="header-date" id="currentDate">Loading...</span>
+    </header>
+
+    <section class="stats-grid">
+        <div class="stat-card accent-blue">
+            <div class="stat-label">Total Personas</div>
+            <div class="stat-value">60</div>
+            <div class="stat-sub">All with unique avatars</div>
+        </div>
+
+        <div class="stat-card accent-green">
+            <div class="stat-label">Testimonial Images</div>
+            <div class="stat-value" id="totalImagesStat">20</div>
+            <div class="stat-sub">Available to send</div>
+        </div>
+
+        <div class="stat-card accent-orange">
+            <div class="stat-label">Images Sent</div>
+            <div class="stat-value" id="imagesSentStat">0</div>
+            <div class="stat-sub">Used so far</div>
+        </div>
+
+        <div class="stat-card accent-purple">
+            <div class="stat-label">Remaining</div>
+            <div class="stat-value" id="imagesRemainingStat">20</div>
+            <div class="stat-sub">Still in the pool</div>
+        </div>
+
+        <div class="stat-card accent-red">
+            <div class="stat-label">Active Communities</div>
+            <div class="stat-value">1</div>
+            <div class="stat-sub">GrowthPilot Hub</div>
+        </div>
+    </section>
+
+    <section class="quick-action-card">
+        <h3><span>⚡</span> Quick Actions</h3>
+        <div class="action-grid">
+            <button class="action-btn">📢 Launch Campaign</button>
+            <button class="action-btn">👤 Add Persona</button>
+            <button class="action-btn">📊 View Analytics</button>
+            <button class="action-btn">📤 Export Data</button>
+            <button class="action-btn">📅 Schedule Post</button>
+            <button class="action-btn">⚙️ Bot Settings</button>
+            <button class="action-btn">🔄 Reset Image Pool</button>
+            <button class="action-btn">📸 Preview Testimonials</button>
+        </div>
+        <div class="card-footer">
+            <span>💡 Need help? <a href="#">Watch the quick tutorial →</a></span>
+            <span class="badge">🔵 Live · 60 personas active</span>
+        </div>
+    </section>
+
+    <div class="widgets-row">
+
+        <div class="widget-card">
+            <h4>🕐 Recent Community Activity</h4>
+            <div class="activity-item">
+                <span class="activity-dot green"></span>
+                <span class="activity-text"><span class="highlight">Mark T.</span> posted: “Up 12% this week! 🔥”</span>
+                <span class="activity-time">2 min ago</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-dot blue"></span>
+                <span class="activity-text"><span class="highlight">Sarah C.</span> shared a testimonial image</span>
+                <span class="activity-time">18 min ago</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-dot orange"></span>
+                <span class="activity-text"><span class="highlight">David O.</span> asked: “Best risk setting for EU?”</span>
+                <span class="activity-time">1 hour ago</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-dot purple"></span>
+                <span class="activity-text"><span class="highlight">Elena R.</span> just joined the community</span>
+                <span class="activity-time">3 hours ago</span>
+            </div>
+            <div class="activity-item">
+                <span class="activity-dot green"></span>
+                <span class="activity-text"><span class="highlight">James K.</span> posted: “Withdrew $500 today. This bot pays!”</span>
+                <span class="activity-time">5 hours ago</span>
+            </div>
+        </div>
+
+        <div class="widget-card">
+            <h4>📸 Testimonial Image Pool</h4>
+            <div class="image-pool-status">
+                <div class="pool-stats">
+                    <span>Used: <strong id="usedCountInline">0</strong> / 20</span>
+                    <span>Remaining: <strong id="remainingCountInline">20</strong></span>
+                </div>
+                <div class="pool-bar">
+                    <div class="fill" id="poolFill" style="width: 0%;"></div>
+                </div>
+                <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">
+                    ⚡ Images stop automatically after all 20 are sent.
+                </div>
+                <div style="margin-top: 12px; font-size: 13px; background: #f0f7ff; padding: 10px 14px; border-radius: 12px; border-left: 3px solid #007aff;">
+                    <strong>🔹 Next persona with images:</strong>
+                    <span id="nextPersonaHint">persona_004 (2 images left)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const TOTAL_IMAGES = 20;
+        let imagesSent = 0;
+
+        const dateEl = document.getElementById('currentDate');
+        const sentStat = document.getElementById('imagesSentStat');
+        const remainingStat = document.getElementById('imagesRemainingStat');
+        const usedInline = document.getElementById('usedCountInline');
+        const remainingInline = document.getElementById('remainingCountInline');
+        const poolFill = document.getElementById('poolFill');
+        const badge = document.querySelector('.badge');
+
+        const now = new Date();
+        dateEl.textContent = now.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+
+        function updateDashboard(sentCount) {
+            imagesSent = Math.min(sentCount, TOTAL_IMAGES);
+            const remaining = TOTAL_IMAGES - imagesSent;
+            const percent = (imagesSent / TOTAL_IMAGES) * 100;
+
+            sentStat.textContent = imagesSent;
+            remainingStat.textContent = remaining;
+            usedInline.textContent = imagesSent;
+            remainingInline.textContent = remaining;
+            poolFill.style.width = percent + '%';
+
+            if (imagesSent >= TOTAL_IMAGES) {
+                poolFill.style.background = 'linear-gradient(90deg, #ff9500, #ff3b30)';
+                if (badge) badge.textContent = '🟡 Pool Empty · Text-only mode';
+            } else {
+                poolFill.style.background = 'linear-gradient(90deg, #007aff, #00c6ff)';
+                if (badge) badge.textContent = '🔵 Live · 60 personas active';
+            }
+        }
+
+        window.GrowthPilotDashboard = {
+            updateImagesSent: function(count) {
+                updateDashboard(count);
+            },
+            getCurrentStatus: function() {
+                return {
+                    sent: imagesSent,
+                    total: TOTAL_IMAGES,
+                    remaining: TOTAL_IMAGES - imagesSent,
+                    isExhausted: imagesSent >= TOTAL_IMAGES
+                };
+            }
+        };
+
+        updateDashboard(0);
+    })();
+</script>
+
+</body>
+</html>
